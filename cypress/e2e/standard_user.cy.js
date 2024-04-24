@@ -32,9 +32,6 @@ describe('Standard user', () => {
 
     cy.get(standardUser.shoppingCart).click()
     cy.get(standardUser.shoppingCartBadge).should('be.visible')
-
-    //продовжити тут
-
     cy.get(standardUser.checkoutButton).click()
     cy.get(standardUser.checkoutInfo)
       .should('be.visible')
