@@ -9,12 +9,17 @@ module.exports = {
   checkoutButton: '[data-test="checkout"]',
   checkoutInfo: '.checkout_info',
   checkoutFirstName: '[data-test="firstName"]',
-  checkoutLasttName:'[data-test="lastName"]',
-  checkoutZip:'[data-test="postalCode"]',
+  checkoutLasttName: '[data-test="lastName"]',
+  checkoutZip: '[data-test="postalCode"]',
   checkoutContinue: '[data-test="continue"]',
   summaryInfo: '.summary_info',
   checkoutFinishButton: '[data-test="finish"]',
   thanksForOrder: '.complete-header',
-  backHomeButton: '[data-test="back-to-products"]'
+  backHomeButton: '[data-test="back-to-products"]',
+  sortContainer: '[data-test="product-sort-container"]',
+  allItemsNames: '[data-test="inventory-item-name"]',
+  allItemsPrices: '[data-test="inventory-item-price"]',
+  firstItemPrice: ':nth-child(1) > [data-test="inventory-item-description"] > .pricebar > [data-test="inventory-item-price"]',
+  itemPriceAfterOpening: '[data-test="inventory-item-price"]'
 
 }

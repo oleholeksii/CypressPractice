@@ -1,4 +1,4 @@
-import standardUser, { checkoutButton } from "../selectors/standardUser.css"
+import selectors from "../selectors/selectors.js"
 
 describe('Standard user', () => {
   beforeEach(() => {
@@ -8,44 +8,139 @@ describe('Standard user', () => {
   })
 
   it('Login standard user and check if the user is logged in', () => {
-    cy.get(standardUser.title).should('be.visible')
-    cy.get(standardUser.shoppingCart).should('be.visible')
+    cy.get(selectors.title).should('be.visible')
+    cy.get(selectors.shoppingCart).should('be.visible')
   })
 
   it('Check if all the items are visible on the screen', () => {
-    cy.get(standardUser.allItems)
+    cy.get(selectors.allItems)
       .should('be.visible')
       .and('have.length', 6)
   })
 
+  it('Check sorting functionality - Check if inventory items are sorted A-Z', () => {
+    cy.get(selectors.sortContainer)
+      .should('contain', 'Name (A to Z)')
+
+    cy.get(selectors.allItemsNames).then($items => {
+      const names = [...$items].map(el => el.innerText);
+
+      // Sprawdź, czy nazwy są posortowane alfabetycznie
+      const sortedNames = [...names].sort((a, b) => a.localeCompare(b));
+      expect(names).to.deep.equal(sortedNames);
+    })
+  })
+
+  it('Check sorting functionality - Check if inventory items are sorted Z-A', () => {
+    cy.get(selectors.sortContainer)
+      .should('contain', 'Name (A to Z)')
+
+    cy.get(selectors.sortContainer).select('Name (Z to A)')
+
+    cy.get(selectors.allItemsNames).then($items => {
+      const names = $items.map((index, element) => Cypress.$(element).text()).get();
+
+      // Sprawdź, czy nazwy są posortowane alfabetycznie
+      const sortedNames = [...names].sort((a, b) => b.localeCompare(a));
+      expect(names).to.deep.equal(sortedNames);
+    })
+  })
+
+  it('Check sorting functionality - Check if inventory prices are sorted low to high', () => {
+    cy.get(selectors.sortContainer).select('Price (low to high)')
+
+    cy.get(selectors.allItemsPrices).then($prices => {
+      // Pobierz tekst zawierający ceny z tych elementów
+      const pricesText = $prices.map((index, element) => Cypress.$(element).text()).get();
+
+      // Konwertuj tekst na liczby zmiennoprzecinkowe
+      const prices = pricesText.map(price => parseFloat(price.replace('$', '')));
+
+      // Sprawdź, czy ceny są posortowane od najniższej do najwyższej
+      const sortedPrices = [...prices].sort((a, b) => a - b);
+      expect(prices).to.deep.equal(sortedPrices);
+    })
+  })
+
+
+  it('Check sorting functionality - Check if inventory prices are sorted high to low', () => {
+    cy.get(selectors.sortContainer).select('Price (high to low)')
+
+    cy.get(selectors.allItemsPrices).then($prices => {
+
+      const pricesText = $prices.map((index, element) => Cypress.$(element).text()).get()
+
+      const prices = pricesText.map(price => parseFloat(price.replace('$', '')))
+
+      const sortedPrices = [...prices].sort((a, b) => b - a)
+      expect(prices).to.deep.equal(sortedPrices)
+    })
+  })
+
+  // it.only('Check if prices are the same after opening the item', () => {
+
+  //   let itemPrice
+  //   cy.get(selectors.firstItemPrice).invoke('text').then((text) => {
+  //     itemPrice = parseFloat(text.replace('$', '').replace(',', '.'))
+  //   })
+
+  //   cy.get(selectors.firstItem).click()
+  //   cy.get(selectors.itemPriceAfterOpening).invoke('text').then((text) => {
+  //     const itemPriceOpened = parseFloat(text.replace('$', '').replace(',', '.'))
+
+  //     expect(itemPrice).to.equal(itemPriceOpened)
+  //   })
+  // })
+
+  it.only('Check if prices are the same after opening the item', () => {
+
+    cy.get(selectors.allItemsNames).each(($item, index) => {
+
+      let itemPriceBefore
+
+      cy.wrap($item).find(selectors.allItemsPrices).invoke('text').then((text) => {
+        itemPriceBefore = parseFloat(text.replace('$', '').replace(',', '.'))
+      })
+
+      cy.wrap($item).click()
+      cy.get(selectors.itemPriceAfterOpening).invoke('text').then((text) => {
+        const itemPriceAfter = parseFloat(text.replace('zł', '').replace(',', '.'));
+
+        expect(itemPriceBefore).to.equal(itemPriceAfter)
+
+      })
+      cy.go('back')
+    })
+  })
+
   it('Proceed with buying the first item', () => {
-    cy.get(standardUser.firstItem).click()
-    cy.get(standardUser.inventoryDetailsContainer)
+    cy.get(selectors.firstItem).click()
+    cy.get(selectors.inventoryDetailsContainer)
       .should('be.visible')
       .and('contain', 'Sauce Labs Backpack')
 
-    cy.get(standardUser.addToCart)
+    cy.get(selectors.addToCart)
       .should('be.visible')
       .click()
 
-    cy.get(standardUser.shoppingCartBadge).should('be.visible')
+    cy.get(selectors.shoppingCartBadge).should('be.visible')
 
-    cy.get(standardUser.shoppingCart).click()
-    cy.get(standardUser.shoppingCartBadge).should('be.visible')
-    cy.get(standardUser.checkoutButton).click()
-    cy.get(standardUser.checkoutInfo)
+    cy.get(selectors.shoppingCart).click()
+    cy.get(selectors.shoppingCartBadge).should('be.visible')
+    cy.get(selectors.checkoutButton).click()
+    cy.get(selectors.checkoutInfo)
       .should('be.visible')
       .within(() => {
-        cy.get(standardUser.checkoutFirstName).type('John')
-        cy.get(standardUser.checkoutLasttName).type('Doe')
-        cy.get(standardUser.checkoutZip).type('12345')
+        cy.get(selectors.checkoutFirstName).type('John')
+        cy.get(selectors.checkoutLasttName).type('Doe')
+        cy.get(selectors.checkoutZip).type('12345')
       })
 
-    cy.get(standardUser.checkoutContinue).click()
-    cy.get(standardUser.summaryInfo).should('be.visible')
-    cy.get(standardUser.checkoutFinishButton).click()
+    cy.get(selectors.checkoutContinue).click()
+    cy.get(selectors.summaryInfo).should('be.visible')
+    cy.get(selectors.checkoutFinishButton).click()
 
-    cy.get(standardUser.thanksForOrder).should('be.visible')
-    cy.get(standardUser.backHomeButton).click()
+    cy.get(selectors.thanksForOrder).should('be.visible')
+    cy.get(selectors.backHomeButton).click()
   })
 })

@@ -15,9 +15,13 @@ describe('Trying to login - locked out user', () => {
     cy.get(login.errorField)
       .should('be.visible')
       .and('contain', 'Epic sadface: Sorry, this user has been locked out.')
+    cy.get(login.circleErrorUsername).should('be.visible')
+    cy.get(login.circleErrorPassword).should('be.visible')
 
     cy.get(login.errorButton).click()
     cy.get(login.errorField)
       .should('not.contain.text', 'Epic sadface: Sorry, this user has been locked out.')
+    cy.get(login.circleErrorUsername).should('not.exist')
+    cy.get(login.circleErrorPassword).should('not.exist')
   })
 })
