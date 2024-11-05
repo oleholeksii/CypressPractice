@@ -7,6 +7,8 @@ describe('Trying to login - locked out user', () => {
     cy.visit(url)
   })
 
+  //test change just to check is this will be added to git
+  
   it('Login with locked out credentials', () => {
     cy.get(login.loginField).type(userData.locked_out_user.username)
     cy.get(login.passwordField).type(userData.locked_out_user.password)
@@ -23,7 +25,5 @@ describe('Trying to login - locked out user', () => {
       .should('not.contain.text', 'Epic sadface: Sorry, this user has been locked out.')
     cy.get(login.circleErrorUsername).should('not.exist')
     cy.get(login.circleErrorPassword).should('not.exist')
-
-    //test comment
   })
 })
