@@ -18,6 +18,29 @@ describe('Standard user', () => {
       .and('have.length', 6)
   })
 
+/* from chatGPT
+const sortingOptions = [
+  { option: 'Name (A to Z)', order: 'asc' },
+  { option: 'Name (Z to A)', order: 'desc' },
+  { option: 'Price (low to high)', order: 'asc' },
+  { option: 'Price (high to low)', order: 'desc' },
+];
+
+sortingOptions.forEach(({ option, order }) => {
+  it(`Check sorting functionality - ${option}`, () => {
+    cy.get(selectors.sortContainer).select(option);
+    cy.get(selectors.allItemsPrices).then($prices => {
+      const pricesText = $prices.map((index, element) => Cypress.$(element).text()).get();
+      const prices = pricesText.map(price => parseFloat(price.replace('$', '')));
+
+      const sortedPrices = [...prices].sort(order === 'asc' ? (a, b) => a - b : (a, b) => b - a);
+      expect(prices).to.deep.equal(sortedPrices);
+    });
+  });
+});
+
+*/
+
   it('Check sorting functionality - Check if inventory items are sorted A-Z', () => {
     cy.get(selectors.sortContainer)
       .should('contain', 'Name (A to Z)')
